@@ -1,0 +1,10 @@
+<box id="root">
+	<list ctx="notes">
+		<atom ctx="title" />
+		<event name="select" />
+	</list>
+	<box ctx="selected">
+		<atom ctx="title" />
+		<atom ctx="body" />
+	</box>
+</box>
