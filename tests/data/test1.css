@@ -32,4 +32,12 @@ did > .storage {
   propertyG: valueG;
 }
 
+#hen {
+  fly: false;
+}
+
+#hen:hover {
+  fly: true;
+}
+
 

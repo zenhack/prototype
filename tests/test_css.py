@@ -85,6 +85,10 @@ class CssTestCase(unittest.TestCase):
         self._match(0, id='fix')
         self._match(0, cls='fried')
 
+    def test_05c_match_all(self):
+        """Match All"""
+        self._match(4, id='idtest', type='typetest', cls=['clstest', 'othcls'])
+
     def test_06_decendant_match(self):
         """Match Decendants"""
         (this, children, decendants) = self.css.matches(type='div')
@@ -100,6 +104,25 @@ class CssTestCase(unittest.TestCase):
         self.assertEqual(len(decendants), 0)
         self.assertEqual(len(children), 1)
         self.assertEqual(len(children[0].match(cls='storage')))
+
+    def test_08_state(self):
+        """Match state change"""
+        self._match(2, id='hen', states=['hover'])
+        self._match(1, id='hen')
+
+    def test_09_property(self):
+        """Single Property"""
+        (this, children, decendants) = self.css.matches(id='idtest')
+        self.assertEqual(len(this), 1)
+        self.assertEqual(this[0].get('propertyA', 'Nope'), 'valueA')
+
+    def test_10_cascaded(self):
+        """Cascaded Property"""
+        (this, children, decendants) = self.css.matches(id='hen', states=['hover'])
+        self.assertEqual(len(this), 2)
+        # Order is critical!
+        self.assertEqual(this[0].get('fly', 'Nope'), 'false')
+        self.assertEqual(this[1].get('fly', 'Nope'), 'true')
 
 
 if __name__ == '__main__':
