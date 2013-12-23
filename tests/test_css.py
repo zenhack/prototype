@@ -17,46 +17,79 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #
 """
-Test our stand in css module.
+Test our tinycss based css parser module.
 """
 
 import os
 import sys
-import readline
 
 sys.path.insert(0, '../')
-sys.ps1 = "[myshell] "
 
 import unittest
 
-from sterling.css import StyleSheet
+from sterling.css import Stylesheet
 
 try:
     from test import test_support
 except ImportError:
     from test import support as test_support
 
-#class CssTestCase(unittest.TestCase):
-#    def setUp(self):
+with open('data/test1.css') as fhl:
+    DATA = fhl.read()
 
-css = StyleSheet("""
-#hello {
- propA: 8;
-}
+class CssTestCase(unittest.TestCase):
+    def setUp(self):
+        self.css = Stylesheet(DATA)
 
-.foo {
- propB: "hello";
-}
+    def test_00_load(self):
+        """Test Load of css"""
+        self.assertTrue(self.css)
 
-bar {
- propC: 5;
-}
+    def _match(self, n, **kwargs):
+        (this, children, decendants) = self.css.matches(**kwargs)
+        self.assertEqual(len(this), n)
 
-""")
+    def test_01_match_none(self):
+        self._match(0, id='none')
+        self._match(0, cls=['none'])
+        self._match(0, type='none')
 
-#    def test_00_load(self):
-#        """Test Load of css"""
-#        self.css
+    def test_02_match_id(self):
+        self._match(1, id='idtest')
+
+    def test_03_match_class(self):
+        self._match(1, cls=['clstest'])
+        self._match(2, cls=['clstest', 'othcls'])
+        self._match(1, cls=['clstest', 'foo'])
+
+    def test_04_match_type(self):
+        self._match(1, type='typetest')
+
+    def test_05_match_two(self):
+        self._match(1, type='div', cls='bookmark')
+        self._match(0, type='dif', cls='bookmark')
+        self._match(0, type='div', cls='balkmark')
+        self._match(0, type='div')
+        self._match(0, cls='bookmark')
+
+    def test_06_decendant_match(self):
+        (this, children, decendants) = self.css.matches(type='div')
+        self.assertEqual(len(decendants), 1)
+        self.assertEqual(len(decendants[0].match(cls='bookmark'))
+
+    def test_07_child_match(self):
+        (this, children, decendants) = self.css.matches(type='div')
+        self.assertEqual(len(children), 1)
+        self.assertEqual(len(children[0].match(cls='bookmark'))
+
+
+<elementA id="a">
+  <foo>
+    <bar>
+      <p></p>
+    </bar>
+  </foo>
+</elementA>
 
 
 os.environ['PYTHONINSPECT'] = 'True'

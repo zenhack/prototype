@@ -197,11 +197,11 @@ class Style(dict):
     def style_match(self, tid, oid, classes):
         """Returns True if this style matches the given ids"""
         (xtid, xcls, xoid) = self.shallow
-        if xtid != None and tid != xtid:
+        if xtid not in (None, '') and tid != xtid:
             return False
-        if xoid != None and oid != xoid:
+        if xoid not in (None, '') and oid != xoid:
             return False
-        if xcls != None and xcls not in classes:
+        if xcls not in (None, '') and xcls not in classes:
             return False
         return True
 
