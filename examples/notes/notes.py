@@ -17,6 +17,7 @@ class App(model.Model):
 
     def event_select(self, context):
         self.selected = context
+        self.update()
 
 if __name__ == '__main__':
     ui.UI(App(),

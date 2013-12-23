@@ -3,7 +3,7 @@
 		<atom ctx="title" />
 		<event name="select" />
 	</list>
-	<box ctx="selected">
+	<box ctx="selected" id="content">
 		<atom ctx="title" />
 		<atom ctx="body" />
 	</box>
