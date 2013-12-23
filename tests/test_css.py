@@ -22,10 +22,9 @@ Test our tinycss based css parser module.
 
 import os
 import sys
+import unittest
 
 sys.path.insert(0, '../')
-
-import unittest
 
 from sterling.css import Stylesheet
 
@@ -75,22 +74,13 @@ class CssTestCase(unittest.TestCase):
     def test_06_decendant_match(self):
         (this, children, decendants) = self.css.matches(type='div')
         self.assertEqual(len(decendants), 1)
-        self.assertEqual(len(decendants[0].match(cls='bookmark'))
+        self.assertEqual(len(decendants[0].match(cls='bookmark')))
 
     def test_07_child_match(self):
         (this, children, decendants) = self.css.matches(type='div')
         self.assertEqual(len(children), 1)
-        self.assertEqual(len(children[0].match(cls='bookmark'))
+        self.assertEqual(len(children[0].match(cls='bookmark')))
 
-
-<elementA id="a">
-  <foo>
-    <bar>
-      <p></p>
-    </bar>
-  </foo>
-</elementA>
-
-
-os.environ['PYTHONINSPECT'] = 'True'
+if __name__ == '__main__':
+    test_support.run_unittest(CssTestCase)
 

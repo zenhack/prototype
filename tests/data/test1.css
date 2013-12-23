@@ -1,0 +1,31 @@
+
+/* Comment */
+#idtest {
+  propertyA: valueA;
+}
+
+.clstest {
+  propertyB: valueB;
+}
+
+.othcls {
+  propertyX: valueX;
+}
+
+typetest {
+  propertyC: valueC;
+}
+
+div.bookmark {
+  propertyD: valueD;
+}
+
+div .bookmark {
+  propertyE: valueE;
+}
+
+div > .bookmark {
+  propertyF: valueF;
+}
+
+
