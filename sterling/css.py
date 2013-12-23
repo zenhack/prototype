@@ -22,7 +22,14 @@ import os
 import sys
 import logging
 
+def block(string, f1, f2, s):
+    """Return the start and end char positions of a block."""
+    i = string.find(f1, s)
+    j = string.find(f2, i)
+    return (i, j)
+
 def parse(string, sep='=', eol='\n', t=str, start=0):
+    """Parse a block and return a dictionary"""
     result = {}
     while True:
         (i, j) = block(string, sep, eol, start)
@@ -34,6 +41,7 @@ def parse(string, sep='=', eol='\n', t=str, start=0):
     return result
 
 def remove(string, left='"""', right='"""'):
+    """Remove a block of text"""
     start = 0
     while True:
         (i, j) = block(string, left, right, start)
@@ -47,10 +55,9 @@ def remove(string, left='"""', right='"""'):
 class StyleController(dict):
     """Control the default values, give access to a simple
     dictionary of types with sub dictionaries of properties"""
-    def __init__(self, executor):
+    def __init__(self):
         dict.__init__(self)
         self['*'] = {}
-        self.exe = executor
         self.filters = {}
         self.lames = {}
 
@@ -60,7 +67,7 @@ class StyleController(dict):
 
     def add_globals(self, namespace):
         """Add names to be available in the css for all names."""
-        self.exe.update(namespace)
+        pass
 
     def add_locals(self, namespaces):
         """Add a dictionary of namespaces to be used on those names only."""
@@ -121,9 +128,8 @@ class StyleController(dict):
             return self.filters[name](value)
         elif isinstance(value, basestring):
             # This value came from the css sheet and is code.
-            if "\n" in value:
-                logging.warn("There is a carage return in the value here: '%s' for %s" % (value, name))
-            return self.exe.run(value+',', extras=self.lames.get(name, None))
+            # We could run code here, these are literals and we can handle them as choices in a dictionary or as some other data.
+            raise NotImplementedError("Literals not implimented");
         else:
             logging.error("Unknown type: %s" % type(value))
 
