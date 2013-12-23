@@ -45,41 +45,62 @@ class CssTestCase(unittest.TestCase):
         self.assertTrue(self.css)
 
     def _match(self, n, **kwargs):
+        """Wrapper for a simple match"""
         (this, children, decendants) = self.css.matches(**kwargs)
         self.assertEqual(len(this), n)
 
     def test_01_match_none(self):
+        """Mismatch Returns None"""
         self._match(0, id='none')
         self._match(0, cls=['none'])
         self._match(0, type='none')
 
     def test_02_match_id(self):
+        """Match Single ID"""
         self._match(1, id='idtest')
 
     def test_03_match_class(self):
+        """Match Classes"""
         self._match(1, cls=['clstest'])
         self._match(2, cls=['clstest', 'othcls'])
         self._match(1, cls=['clstest', 'foo'])
 
     def test_04_match_type(self):
+        """Match Element Type"""
         self._match(1, type='typetest')
 
     def test_05_match_two(self):
-        self._match(1, type='div', cls='bookmark')
-        self._match(0, type='dif', cls='bookmark')
-        self._match(0, type='div', cls='balkmark')
-        self._match(0, type='div')
-        self._match(0, cls='bookmark')
+        """Match Type and Class together"""
+        self._match(1, type='dove', cls='fried')
+        self._match(0, type='dofe', cls='fried')
+        self._match(0, type='dove', cls='frozen')
+        self._match(0, type='dove')
+        self._match(0, cls='fried')
+
+    def test_05b_match_two(self):
+        """Match Id and Class"""
+        self._match(1, id='fox', cls='fried')
+        self._match(0, id='fex', cls='fried')
+        self._match(0, id='fox', cls='frozen')
+        self._match(0, id='fix')
+        self._match(0, cls='fried')
 
     def test_06_decendant_match(self):
+        """Match Decendants"""
         (this, children, decendants) = self.css.matches(type='div')
+        self.assertEqual(len(this), 0)
+        self.assertEqual(len(chilren), 0)
         self.assertEqual(len(decendants), 1)
         self.assertEqual(len(decendants[0].match(cls='bookmark')))
 
     def test_07_child_match(self):
-        (this, children, decendants) = self.css.matches(type='div')
+        """Match Direct Children"""
+        (this, children, decendants) = self.css.matches(type='did')
+        self.assertEqual(len(this), 0)
+        self.assertEqual(len(decendants), 0)
         self.assertEqual(len(children), 1)
-        self.assertEqual(len(children[0].match(cls='bookmark')))
+        self.assertEqual(len(children[0].match(cls='storage')))
+
 
 if __name__ == '__main__':
     test_support.run_unittest(CssTestCase)

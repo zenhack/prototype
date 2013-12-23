@@ -16,16 +16,20 @@ typetest {
   propertyC: valueC;
 }
 
-div.bookmark {
+dove.fried {
   propertyD: valueD;
 }
 
-div .bookmark {
+#fox.fried {
   propertyE: valueE;
 }
 
-div > .bookmark {
+div .bookmark {
   propertyF: valueF;
+}
+
+did > .storage {
+  propertyG: valueG;
 }
 
 
