@@ -110,9 +110,13 @@ class CssTestCase(unittest.TestCase):
         self.assertEqual(len(matches.children), 1)
         self.assertEqual(len(matches.match(cls='storage')), 1)
 
-    def test_10_state(self):
+    def tast_10_state(self):
         """Match state change"""
-        self._match(2, id='hen', states=['hover'])
+        matches = self.css.matches(id='hen')
+        self._match(1, id='hen')
+        matches.add_state('hover')
+        self._match(2, id='hen')
+        matches.remove_state('hover')
         self._match(1, id='hen')
 
     def test_11_property(self):
@@ -128,9 +132,10 @@ class CssTestCase(unittest.TestCase):
         self.assertEqual(len(matches), 1)
         self.assertEqual(matches['propertyB'], None)
 
-    def test_13_cascaded(self):
+    def tast_13_cascaded(self):
         """Cascaded Property"""
-        matches = self.css.matches(id='hen', states=['hover'])
+        matches = self.css.matches(id='hen')
+        matches.add_state('hover')
         self.assertEqual(len(matches), 2)
         # Order is critical!
         self.assertEqual(matches[0]['fly'], 'false')
