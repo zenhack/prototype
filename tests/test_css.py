@@ -144,6 +144,16 @@ class CssTestCase(unittest.TestCase):
             self.assertEqual(len(matches), 1)
             self.assertEqual(matches['property'], 'true')
 
+    def test_15_dictionary(self):
+        """List of Properties"""
+        matches = self.css.matches(id='hen')
+        self.assertEqual(matches[0].keys()[0], 'fly')
+        self.assertEqual(matches.keys()[0], 'fly')
+
+        matches = self.css.matches(cls=['clstest', 'othcls'])
+        self.assertTrue('propertyB' in matches.keys())
+        self.assertTrue('propertyX' in matches.keys())
+
 
 if __name__ == '__main__':
     test_support.run_unittest(CssTestCase)
