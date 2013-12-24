@@ -48,7 +48,7 @@ class CssTestCase(unittest.TestCase):
     def _match(self, n, *args, **kwargs):
         """Wrapper for a simple match"""
         matches = self.css.matches(*args, **kwargs)
-        self.assertEqual(len(this), n)
+        self.assertEqual(len(matches), n)
 
     def test_01_match_none(self):
         """Mismatch Returns None"""
@@ -126,7 +126,7 @@ class CssTestCase(unittest.TestCase):
         """No Property is Null"""
         matches = self.css.matches(id='idtest')
         self.assertEqual(len(matches), 1)
-        self.assertEqual(this['propertyB'], None)
+        self.assertEqual(matches['propertyB'], None)
 
     def test_13_cascaded(self):
         """Cascaded Property"""
@@ -141,7 +141,7 @@ class CssTestCase(unittest.TestCase):
         """Multiple Selectors"""
         for name in ('h1', 'h2', 'h3'):
             matches = self.css.matches(name=name)
-            self.assertEqual(len(this), 1)
+            self.assertEqual(len(matches), 1)
             self.assertEqual(matches['property'], 'true')
 
 
