@@ -110,7 +110,7 @@ class CssTestCase(unittest.TestCase):
         self.assertEqual(len(matches.children), 1)
         self.assertEqual(len(matches.match(cls='storage')), 1)
 
-    def tast_10_state(self):
+    def test_10_state(self):
         """Match state change"""
         matches = self.css.matches(id='hen')
         self._match(1, id='hen')
@@ -132,7 +132,7 @@ class CssTestCase(unittest.TestCase):
         self.assertEqual(len(matches), 1)
         self.assertEqual(matches['propertyB'], None)
 
-    def tast_13_cascaded(self):
+    def test_13_cascaded(self):
         """Cascaded Property"""
         matches = self.css.matches(id='hen')
         matches.add_state('hover')
@@ -158,6 +158,18 @@ class CssTestCase(unittest.TestCase):
         matches = self.css.matches(cls=['clstest', 'othcls'])
         self.assertTrue('propertyB' in matches.keys())
         self.assertTrue('propertyX' in matches.keys())
+
+    def test_16_chain(self):
+        """Chain Decendants"""
+        matches = self.css
+        for name in ('A','B','C','D'):
+            matches = matches.matches(name=name)
+
+            if name == 'D':
+                self.assertEqual(len(matches), 1)
+                self.assertEqual(matches['property'], 'true')
+            else:
+                self.assertEqual(len(matches), 0)
 
 
 if __name__ == '__main__':
