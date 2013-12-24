@@ -5,4 +5,5 @@ setup(name='sterling',
       author_email='ian@zenhack.net',
       url='https://github.com/sterling-ui/prototype',
       packages=['sterling'],
+      requires=['tinycss'],
      )
