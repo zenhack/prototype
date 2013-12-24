@@ -40,8 +40,11 @@ class Stylesheet(object):
         for selector, rule in self.rules:
             if selector.match(name=name, id=id, cls=cls):
                 results.append((selector, rule))
+                logging.error("selector (%s#%s.%s) matched (%s#%s.%s)" %
+                              (selector.name, selector.id, selector.cls,
+                               name, id, cls))
 
-        return (results,[],[])
+        return results
 
 class ParseError(Exception): pass
 
@@ -103,8 +106,8 @@ class Selector(object):
         # Make sure all of required the cls are there.
         if type(cls) == type(''):
             cls = [cls]
-        for cls in self.cls:
-            if not cls in cls:
+        for required_class in self.cls:
+            if not required_class in cls:
                 return False
         # Nothing missing.
         return True
