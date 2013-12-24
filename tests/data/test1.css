@@ -40,4 +40,12 @@ did > .storage {
   fly: true;
 }
 
+h1, h2, h3 {
+  property: true;
+}
+
+A B C D {
+  property: true;
+}
+
 

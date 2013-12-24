@@ -25,6 +25,7 @@ import sys
 import unittest
 
 sys.path.insert(0, '../')
+sys.path.insert(0, './')
 
 from sterling.css import Stylesheet
 
@@ -44,16 +45,16 @@ class CssTestCase(unittest.TestCase):
         """Test Load of css"""
         self.assertTrue(self.css)
 
-    def _match(self, n, **kwargs):
+    def _match(self, n, *args, **kwargs):
         """Wrapper for a simple match"""
-        (this, children, decendants) = self.css.matches(**kwargs)
+        matches = self.css.matches(*args, **kwargs)
         self.assertEqual(len(this), n)
 
     def test_01_match_none(self):
         """Mismatch Returns None"""
         self._match(0, id='none')
         self._match(0, cls=['none'])
-        self._match(0, type='none')
+        self._match(0, name='none')
 
     def test_02_match_id(self):
         """Match Single ID"""
@@ -65,16 +66,16 @@ class CssTestCase(unittest.TestCase):
         self._match(2, cls=['clstest', 'othcls'])
         self._match(1, cls=['clstest', 'foo'])
 
-    def test_04_match_type(self):
+    def test_04_match_name(self):
         """Match Element Type"""
-        self._match(1, type='typetest')
+        self._match(1, name='nametest')
 
     def test_05_match_two(self):
         """Match Type and Class together"""
-        self._match(1, type='dove', cls='fried')
-        self._match(0, type='dofe', cls='fried')
-        self._match(0, type='dove', cls='frozen')
-        self._match(0, type='dove')
+        self._match(1, name='dove', cls='fried')
+        self._match(0, name='dofe', cls='fried')
+        self._match(0, name='dove', cls='frozen')
+        self._match(0, name='dove')
         self._match(0, cls='fried')
 
     def test_06_match_two(self):
@@ -87,23 +88,27 @@ class CssTestCase(unittest.TestCase):
 
     def test_07_match_all(self):
         """Match All"""
-        self._match(4, id='idtest', type='typetest', cls=['clstest', 'othcls'])
+        self._match(4, id='idtest', name='nametest', cls=['clstest', 'othcls'])
+
+    def test_07_match_args(self):
+        """Allow Args Tuple"""
+        self._match(4, 'nametest', 'idtest', ['clstest', 'othcls'])
 
     def test_08_decendant_match(self):
         """Match Decendants"""
-        (this, children, decendants) = self.css.matches(type='div')
-        self.assertEqual(len(this), 0)
-        self.assertEqual(len(chilren), 0)
-        self.assertEqual(len(decendants), 1)
-        self.assertEqual(len(decendants[0].match(cls='bookmark')))
+        matches = self.css.matches(name='div')
+        self.assertEqual(len(matches), 0)
+        self.assertEqual(len(matches.chilren), 0)
+        self.assertEqual(len(matches.decendants), 1)
+        self.assertEqual(len(matches.match(cls='bookmark')), 1)
 
     def test_09_child_match(self):
         """Match Direct Children"""
-        (this, children, decendants) = self.css.matches(type='did')
-        self.assertEqual(len(this), 0)
-        self.assertEqual(len(decendants), 0)
-        self.assertEqual(len(children), 1)
-        self.assertEqual(len(children[0].match(cls='storage')))
+        matches = self.css.matches(name='did')
+        self.assertEqual(len(matches), 0)
+        self.assertEqual(len(matches.decendants), 0)
+        self.assertEqual(len(matches.children), 1)
+        self.assertEqual(len(matches.match(cls='storage')), 1)
 
     def test_10_state(self):
         """Match state change"""
@@ -112,17 +117,32 @@ class CssTestCase(unittest.TestCase):
 
     def test_11_property(self):
         """Single Property"""
-        (this, children, decendants) = self.css.matches(id='idtest')
-        self.assertEqual(len(this), 1)
-        self.assertEqual(this[0].get('propertyA', 'Nope'), 'valueA')
+        matches = self.css.matches(id='idtest')
+        self.assertEqual(len(matches), 1)
+        self.assertEqual(matches[0]['propertyA'], 'valueA')
+        self.assertEqual(matches['propertyA'], 'valueA')
 
-    def test_12_cascaded(self):
+    def test_12_empty(self):
+        """No Property is Null"""
+        matches = self.css.matches(id='idtest')
+        self.assertEqual(len(matches), 1)
+        self.assertEqual(this['propertyB'], None)
+
+    def test_13_cascaded(self):
         """Cascaded Property"""
-        (this, children, decendants) = self.css.matches(id='hen', states=['hover'])
-        self.assertEqual(len(this), 2)
+        matches = self.css.matches(id='hen', states=['hover'])
+        self.assertEqual(len(matches), 2)
         # Order is critical!
-        self.assertEqual(this[0].get('fly', 'Nope'), 'false')
-        self.assertEqual(this[1].get('fly', 'Nope'), 'true')
+        self.assertEqual(matches[0]['fly'], 'false')
+        self.assertEqual(matches[1]['fly'], 'true')
+        self.assertEqual(matches['fly'], 'true')
+
+    def test_14_multiple_selectors(self):
+        """Multiple Selectors"""
+        for name in ('h1', 'h2', 'h3'):
+            matches = self.css.matches(name=name)
+            self.assertEqual(len(this), 1)
+            self.assertEqual(matches['property'], 'true')
 
 
 if __name__ == '__main__':
