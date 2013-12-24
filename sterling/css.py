@@ -34,11 +34,11 @@ class Stylesheet(object):
             selector = Selector(rule.selector)
             self.rules.append((selector,rule))
 
-    def matches(self, **kwargs):
+    def matches(self, name=None, id=None, cls=[]):
         results = []
 
         for selector, rule in self.rules:
-            if selector.match(**kwargs):
+            if selector.match(name=name, id=id, cls=cls):
                 results.append((selector, rule))
 
         return (results,[],[])
