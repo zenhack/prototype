@@ -24,6 +24,20 @@ import logging
 
 import tinycss
 
+class Results(object):
+    def __init__(self):
+        self.results = []
+
+    def __len__(self):
+        return len(self.results)
+
+    def __iter__(self):
+        for item in self.results:
+            yield item
+
+    def append(self, item):
+        self.results.append(item)
+
 class Stylesheet(object):
     """A single style sheet objct"""
     def __init__(self, content):
@@ -35,14 +49,11 @@ class Stylesheet(object):
             self.rules.append((selector,rule))
 
     def matches(self, name=None, id=None, cls=[]):
-        results = []
+        results = Results()
 
         for selector, rule in self.rules:
             if selector.match(name=name, id=id, cls=cls):
                 results.append((selector, rule))
-                logging.error("selector (%s#%s.%s) matched (%s#%s.%s)" %
-                              (selector.name, selector.id, selector.cls,
-                               name, id, cls))
 
         return results
 
