@@ -98,7 +98,7 @@ class CssTestCase(unittest.TestCase):
         """Match Decendants"""
         matches = self.css.matches(name='div')
         self.assertEqual(len(matches), 0)
-        self.assertEqual(len(matches.chilren), 0)
+        self.assertEqual(len(matches.children), 0)
         self.assertEqual(len(matches.decendants), 1)
         self.assertEqual(len(matches.match(cls='bookmark')), 1)
 
