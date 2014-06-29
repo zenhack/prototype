@@ -5,11 +5,11 @@ OBJ_MODE = 0
 LIST_MODE = 1
 
 
-class Structure(object):
-    """Generates a UI structure from a definitions file"""
+class Frame(object):
+    """Generates a UI frame from a definitions file"""
     def __init__(self, ui_file):
         self.ui = ui_file
-        # Load structure here.
+        # Load frame here.
 
     def generate_list(self, context):
         for x in context:
