@@ -1,8 +1,4 @@
 
-import sys
-
-sys.path.insert(0, './lib')
-
 from sterling import Model, App
 
 class Main(App):
