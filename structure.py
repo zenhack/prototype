@@ -11,30 +11,30 @@ class Structure(object):
         self.ui = ui_file
         # Load structure here.
 
-	def generate_list(self, context):
+    def generate_list(self, context):
         for x in context:
             for i in self.generate(x):
                 yield i
 
-	def generate(self, context, mode=None):
-		if self.target:
-			context = getattr(context, self.target)
+    def generate(self, context, mode=None):
+    	if self.target:
+    		context = getattr(context, self.target)
 
-		if callable(context):
-			context = context()
+    	if callable(context):
+    		context = context()
 
-		if (type(context) is in (list, tuple, GeneratorType) and not mode) or mode == LIST_MODE:
-			return self.generate_list(context)
+    	if (type(context) in (list, tuple, GeneratorType) and mode is None) or mode == LIST_MODE:
+    		return self.generate_list(context)
 
-		if self.widget == 'ref':
-			return self.generate(context, self.find(self.to))
+    	if self.widget == 'ref':
+    		return self.generate(context, self.find(self.to))
 
-		widget = EflWidget(self.widget) #{ 'widget', 'id?', 'class?', 'mode?' 'target?', ref_only:'to?' }
+    	widget = EflWidget(self.widget) #{ 'widget', 'id?', 'class?', 'mode?' 'target?', ref_only:'to?' }
 
-		for child in self:
-			widget.append( self.generate(context, child, mode=child.mode) )
+    	for child in self:
+    		widget.append( self.generate(context, child, mode=child.mode) )
 
-		return [widget]
+    	return [widget]
 
     def __iter__(self):
         pass
