@@ -23,7 +23,7 @@ class Structure(object):
     	if callable(context):
     		context = context()
 
-    	if (type(context) in (list, tuple, GeneratorType) and not mode) or mode == LIST_MODE:
+    	if (type(context) in (list, tuple, GeneratorType) and mode is None) or mode == LIST_MODE:
     		return self.generate_list(context)
 
     	if self.widget == 'ref':
