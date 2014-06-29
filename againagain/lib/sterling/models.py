@@ -11,7 +11,7 @@ Documentation goes here
 
 from xssd import Validator, ParseXML
 
-from .css import ParseCSS
+#from .css import ParseCSS
 
 #
 # This schema for our ui files will need to be thought out
@@ -47,7 +47,7 @@ class App(Model):
     css = None
 
     def __init__(self):
-        self._css = ParseCSS(self.css or self._name() + '.css')
+#        self._css = ParseCSS(self.css or self._name() + '.css')
         self._ui  = ParseXML(self.ui or self._name() + '.xml').data
 
         errors = VALD.validate(self._ui)
