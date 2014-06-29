@@ -1,0 +1,10 @@
+window {
+	size: auto;
+	position: center;
+	/* add to this when needed */
+}
+
+label.button {
+	background: gray;
+	border-radius: 5px;
+}
