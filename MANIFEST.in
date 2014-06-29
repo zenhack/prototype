@@ -1,9 +1,0 @@
-include AUTHORS
-include COPYING
-include README.md
-include MANIFEST.in
-include setup.py
-include sterling/*.py
-include tests/*.py
-include tests/data/*
-include examples/*/*.*
