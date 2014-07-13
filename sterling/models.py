@@ -9,18 +9,14 @@ Documentation goes here
 
 """
 
-try:
-    from xssd import Validator, ParseXML
-except ImportError:
-    Validator = None
-
+from xssd import Validator, ParseXML
 from .csslavie import CssParser
 
 #
 # This schema for our ui files will need to be thought out
 # as we expand. More checks and details etc.
 #
-VALD = {
+VALD = Validator({
   'root' : [ { 'name' : 'window',  'type' : 'container' } ],
   'complexTypes': {
     'widget': [
@@ -31,9 +27,8 @@ VALD = {
       { 'name' : 'label',  'type' : 'widget', 'minOccurs': 0, 'maxOccurs': 'unbounded' },
     ],
   },
-}
-if Validator:
-    VALD = Validator(VALD)
+})
+
 
 class InvalidFile(ValueError):
     pass
@@ -52,8 +47,6 @@ class App(Model):
     css = None
 
     def __init__(self):
-        if not Validator:
-            raise ImportError("Can't find xssd python module.")
         self._css = CssParser(self.css or self._name() + '.css')
         self._ui  = ParseXML(self.ui or self._name() + '.xml').data
 
