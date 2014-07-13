@@ -33,8 +33,8 @@ class PropertyObject(object):
     """
     def __new__(cls, *p, **k):
         inst = object.__new__(cls)
-        inst.__attrs__ = DefaultOrderedDict(dict)
-        inst.__watch__ = defaultdict(Event)
+        inst._attrs = DefaultOrderedDict(dict)
+        inst._watch = defaultdict(Event)
         return inst
 
     def __init__(self, name=None, classes=None):
@@ -43,37 +43,37 @@ class PropertyObject(object):
 
     def __setattr__(self, name, value):
         if name[0] != '_':
-            self.__attrs__['user'][name] = value
+            self._attrs['user'][name] = value
         object.__setattr__(self, name, value)
 
     def __delattr__(self, name):
-        if name[0] != '_' and name in self.__attrs__['user']:
-            self.__attrs__['user'].pop(name)
+        if name[0] != '_' and name in self._attrs['user']:
+            self._attrs['user'].pop(name)
         self.refresh([name])
 
     def add_to(self, d, name='base'):
-        reorder = name not in self.__attrs__
+        reorder = name not in self._attrs
 
-        self.__attrs__[name].update(d)
+        self._attrs[name].update(d)
         if reorder:
-            self.__attrs__.sort_to_end('user')
+            self._attrs.sort_to_end('user')
 
         self.__dict__.update(d)
 
-        if 'user' in self.__attrs__:
-            self.__dict__.update(self.__attrs__['user'])
+        if 'user' in self._attrs:
+            self.__dict__.update(self._attrs['user'])
 
     def remove(self, name):
-        old = self.__attrs__.pop(name)
+        old = self._attrs.pop(name)
         self.refresh(old.keys())
 
     def refresh(self, keys=None):
-        keys = keys or self.__attrs__.super_keys()
-        self.__dict__.update(self.__attrs__.super_gets(keys))
+        keys = keys or self._attrs.super_keys()
+        self.__dict__.update(self._attrs.super_gets(keys))
 
     def watch(self, callback, name, value=None, callback_off=None):
         """A single watcher for attribute changes... can also detect on/off switching"""
-        self.__watch__[name] += callback
+        self._watch[name] += callback
 
 
 
