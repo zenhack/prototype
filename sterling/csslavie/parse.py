@@ -69,7 +69,7 @@ def number_filter(value):
             return int(value)
     except ValueError:
         raise FilterRejection("Not a Number")
-        
+
 
 GLOBAL_FILTERS = {
   number_filter,
@@ -88,12 +88,13 @@ def _parse(string, sep='=', eol='\n', vtype=str, ktype=str, start=0):
 
     sep   - seperator between a name and value pair
     eol   - An end of line marker to stop the parsing.
-    t     - will return the given type, default string.
-    start - Starting charicter number.
+    start - Starting character number.
     vtype - Type or filter for each of the values before returning.
     ktype - Type or filter for each of the keys, if the function returns a list
             each immutable item in the list is a key with a duplicate of the value.
 
+    Both sep and eol must be single characters - multi-character delimiters are
+    *not* supported.
     """
     result = []
     while True:
