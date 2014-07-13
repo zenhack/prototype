@@ -22,7 +22,7 @@ sys.path.insert(0, '../')
 sys.path.insert(0, '.')
 
 import unittest
-from csslavie.objects import PropertyObject
+from sterling.csslavie import PropertyObject
 try:
     from test import test_support
 except ImportError:

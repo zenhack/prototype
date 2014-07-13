@@ -21,7 +21,7 @@ import sys
 sys.path.insert(0, '../')
 
 import unittest
-from csslavie import CssParser
+from sterling.csslavie import CssParser
 try:
     from test import test_support
 except ImportError:
