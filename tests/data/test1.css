@@ -1,0 +1,30 @@
+
+/* Multi line comment with stuff:
+
+name {
+  value: -1;
+}*/
+
+name {
+  value: 1;
+  sticky: -1;
+}
+
+// Single line comment not supported by normal css parsers
+
+.name {
+  value: 3;
+}
+
+#name {
+  value: 2;
+}
+
+name.name#name {
+  value: 4;
+}
+
+name#parent name#child {
+  value: 5;
+}
+
