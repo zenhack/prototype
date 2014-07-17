@@ -3,44 +3,30 @@ from types import GeneratorType
 import xml.etree.ElementTree as ET
 from abc import abstractmethod, ABCMeta
 
-from .widget import lookup
+SEQ_MODE = 1
+OBJ_MODE = 2
 
-OBJ_MODE = 0
-LIST_MODE = 1
+_widgets = {}
 
-#class Frame(object):
-#    """Generates a UI frame from a definitions file"""
-#    def __init__(self, ui_file):
-#        self.xml_root = ET.parse(ui_file)
-#
-#    def generate_list(self, context):
-#        for x in context:
-#            for i in self.generate(x):
-#                yield i
-#
-#    def generate(self, context, mode=None):
-#    	if self.target:
-#    		context = getattr(context, self.target)
-#
-#    	if callable(context):
-#    		context = context()
-#
-#    	if (type(context) in (list, tuple, GeneratorType) and mode is None) or mode == LIST_MODE:
-#    		return self.generate_list(context)
-#
-#    	if self.widget == 'ref':
-#    		return self.generate(context, self.find(self.to))
-#
-#    	widget = EflWidget(self.widget) #{ 'widget', 'id?', 'class?', 'mode?' 'target?', ref_only:'to?' }
-#
-#    	for child in self:
-#    		widget.append( self.generate(context, child, mode=child.mode) )
-#
-#    	return [widget]
-#
-#    def __iter__(self):
-#        pass
-#        # Loop through widgets
+
+def widget(cls):
+    """A decorator for declaring widget classes.
+
+    The decorated class will be discoverable when generating frames from an
+    xml description.
+
+    TODO: There's probably a way to wrap this into the Frame class, so that
+    simply subclassing is enough.
+    """
+    _widgets[cls.__name__.lower()] = cls
+    return cls
+
+
+def _mode(obj):
+    if type(obj) in {list, tuple, GeneratorType}:
+        return SEQ_MODE
+    else:
+        return OBJ_MODE
 
 
 def _default_get(haystack, needle, default):
@@ -48,6 +34,7 @@ def _default_get(haystack, needle, default):
         return haystack[needle]
     except KeyError:
         return default
+
 
 class Frame(object):
     __metaclass__ = ABCMeta
@@ -59,20 +46,22 @@ class Frame(object):
         self.mode = _default_get(self.attrs, 'mode', None)
 
     def widget_seq(self, data):
+        """Returns a widget for each element of data, based on this frame."""
         for datum in data:
-            for widget in self.generate(datum):
+            for widget in self.widget_contents(datum):
                 yield widget
 
     def widget_contents(self, data):
+        """Returns a generator of all directy child widgets of this frame."""
         if self.ctx:
             data = getattr(data, self.ctx)
 
-        if (type(context) in (list, tuple, GeneratorType) and self.mode is None) \
-                or mode is LIST_MODE:
-            return self.widget_seq(data)
-
-        for i in range(len(self.children)):
-            yield self.children[i].widget(data)
+        mode = self.mode or _mode(data)
+        if mode is SEQ_MODE:
+            self.widget_seq(data)
+        else:
+            for child in self.children:
+                yield child.widget(data)
 
     def widget(self, data):
         ret = self.make_widget(data)
@@ -89,7 +78,8 @@ def from_file(filename):
     root = ET.parse(filename)
     return _from_xml(root)
 
+
 def _from_xml(root):
     children = map(_from_xml, root)
-    widget_cls = lookup(root.tag)
+    widget_cls = _widgets[root.tag.lower()]
     return widget_cls(attrs=root.attrib, children=children)
