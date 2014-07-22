@@ -1,0 +1,4 @@
+<window>
+	<button ctx="first" />
+	<button ctx="last" />
+</window>

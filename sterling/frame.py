@@ -40,15 +40,18 @@ class Frame(object):
     __metaclass__ = ABCMeta
 
     def __init__(self, attrs=None, children=None):
-        self.attrs = attrs or []
+        self.attrs = attrs or {}
         self.children = children or {}
         self.ctx = _default_get(self.attrs, 'ctx', None)
         self.mode = _default_get(self.attrs, 'mode', None)
 
+        for child in children:
+            child.parent = self
+
     def widget_seq(self, data):
         """Returns a widget for each element of data, based on this frame."""
         for datum in data:
-            for widget in self.widget_contents(datum):
+            for widget in self.widget_contents(datum, self):
                 yield widget
 
     def widget_contents(self, data):
@@ -61,21 +64,29 @@ class Frame(object):
             self.widget_seq(data)
         else:
             for child in self.children:
-                yield child.widget(data)
+                yield child.widget(data, parent=self)
 
-    def widget(self, data):
-        ret = self.make_widget(data)
-        for w in self.widget_contents():
-            ret.add(w)
+    def widget(self, data, parent=None):
+        ret = self.make_widget(data, parent)
+        for w in self.widget_contents(data):
+            self.add(w)
         return ret
 
     @abstractmethod
-    def make_widget(self, data):
+    def make_widget(self, data, parent=None):
+        pass
+
+    @abstractmethod
+    def efl_container(self):
+        pass
+
+    @abstractmethod
+    def add(self, widget):
         pass
 
 
 def from_file(filename):
-    root = ET.parse(filename)
+    root = ET.parse(filename).getroot()
     return _from_xml(root)
 
 
