@@ -56,9 +56,6 @@ class Frame(object):
 
     def widget_contents(self, data):
         """Returns a generator of all directy child widgets of this frame."""
-        if self.ctx:
-            data = getattr(data, self.ctx)
-
         mode = self.mode or _mode(data)
         if mode is SEQ_MODE:
             self.widget_seq(data)
@@ -67,6 +64,8 @@ class Frame(object):
                 yield child.widget(data, parent=self)
 
     def widget(self, data, parent=None):
+        if self.ctx:
+            data = getattr(data, self.ctx)
         ret = self.make_widget(data, parent)
         for w in self.widget_contents(data):
             self.add(w)
