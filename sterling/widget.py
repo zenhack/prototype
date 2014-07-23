@@ -7,14 +7,14 @@ from efl.elementary import window, box, button
 class Window(frame.Frame):
 
     def make_widget(self, data, parent=None):
-        if hasattr(self, '_win'):
-            return self._win
+        if not hasattr(self, '_win'):
+            self._win = window.StandardWindow('test', 'Test')
+            self._box = box.Box(self._win)
+            self._win.resize_object_add(self._box)
+            self._box.show()
+            self._win.show()
 
-        self._win = window.StandardWindow('test', 'Test')
-        self._box = box.Box(self._win)
-        self._win.resize_object_add(self._box)
-        self._box.show()
-        self._win.show()
+        return self._win
 
     def efl_container(self):
         return self._box
