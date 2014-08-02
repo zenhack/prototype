@@ -1,4 +1,4 @@
 <window>
-	<button ctx="first" />
+	<button ctx="first" clicked="do_it" />
 	<button ctx="last" />
 </window>

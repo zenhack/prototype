@@ -9,6 +9,9 @@ class Model(object):
         self.first = 'hello'
         self.last = 'goodbye'
 
+    def do_it(self, o):
+        print("Done!")
+
 m = Model()
 print(dir(m))
 

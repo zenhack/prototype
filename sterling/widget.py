@@ -26,10 +26,18 @@ class Window(frame.Frame):
 @frame.widget
 class Button(frame.Frame):
 
+    callbacks = ['clicked']
+
     def make_widget(self, data, parent=None):
         if not hasattr(self, '_button'):
             self._button = button.Button(parent.efl_container())
             self._button.text = str(data)
+
+            for cb in self.__class__.callbacks:
+                if cb in self.attrs:
+                    cb_add = getattr(self._button, 'callback_%s_add' % cb)
+                    cb_add(lambda o: getattr(data, self.attrs[cb])(o))
+
             self._button.show()
 
         return self._button
