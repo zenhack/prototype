@@ -40,7 +40,8 @@ class Button(frame.Frame):
         if not hasattr(self, '_button'):
 
             self._button = button.Button(parent.efl_container())
-            self._button.text = str(data)
+            if 'text' in self.attrs:
+                self._button.text = getattr(data, self.attrs['text'])
 
             for cb in self.__class__.callbacks:
                 if cb in self.attrs:
