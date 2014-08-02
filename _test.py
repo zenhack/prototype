@@ -1,6 +1,6 @@
 import efl.elementary as elm
 elm.init()
-from sterling import frame, widget
+from sterling import frame, widget, csslavie
 
 
 class Model(object):
@@ -21,6 +21,8 @@ print(dir(m))
 print(m.first)
 
 app = frame.from_file('test.xml')
+css = csslavie.CssParser('test.css')
+css.attach(app)
 w = app.widget(m)
 
 elm.run()

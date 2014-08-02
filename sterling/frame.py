@@ -3,6 +3,8 @@ from types import GeneratorType
 import xml.etree.ElementTree as ET
 from abc import abstractmethod, ABCMeta
 
+import sterling.csslavie as css
+
 SEQ_MODE = 1
 OBJ_MODE = 2
 
@@ -36,11 +38,18 @@ def _default_get(haystack, needle, default):
         return default
 
 
-class Frame(object):
+class Frame(css.PropertyObject):
     __metaclass__ = ABCMeta
 
     def __init__(self, attrs=None, children=None):
         self.attrs = attrs or {}
+
+        classes = None
+        if 'class' in self.attrs:
+            classes = self.attrs['class'].split(' ')
+        super(Frame, self).__init__(name=self.__class__.__name__.lower(),
+                                    classes=classes)
+
         self.children = children or {}
         self.ctx = _default_get(self.attrs, 'ctx', None)
         self.mode = _default_get(self.attrs, 'mode', None)

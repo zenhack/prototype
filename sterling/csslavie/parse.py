@@ -61,6 +61,7 @@ class CssValueFilters(list):
             self.remove(fil)
         return value
 
+
 def number_filter(value):
     try:
         if '.' in value:
@@ -71,8 +72,15 @@ def number_filter(value):
         raise FilterRejection("Not a Number")
 
 
+def bool_filter(value):
+    if value.lower() in {'true', 'false'}:
+        return value.lower() == 'true'
+    else:
+        raise FilterRejection("Not a Boolean")
+
 GLOBAL_FILTERS = {
-  number_filter,
+    number_filter,
+    bool_filter,
 }
 
 
