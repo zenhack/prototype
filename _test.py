@@ -5,7 +5,7 @@ from sterling import frame, widget, csslavie
 
 class Model(object):
 
-    def __init(self):
+    def __init__(self):
         self.first = 'hello'
         self.last = 'goodbye'
 
@@ -13,12 +13,6 @@ class Model(object):
         print("Done!")
 
 m = Model()
-print(dir(m))
-
-m.__dict__ = {'first': 'hello', 'last': 'goodbye'}
-print(dir(m))
-
-print(m.first)
 
 app = frame.from_file('test.xml')
 css = csslavie.CssParser('test.css')
