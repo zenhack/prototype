@@ -3,7 +3,6 @@ from sterling import frame
 from efl.elementary import window, box, button
 
 
-@frame.widget
 class Window(frame.Frame):
 
     def make_widget(self, data, parent=None):
@@ -31,7 +30,6 @@ class Window(frame.Frame):
         self._box.pack_end(w)
 
 
-@frame.widget
 class Button(frame.Frame):
 
     callbacks = ['clicked']

@@ -8,20 +8,7 @@ import sterling.csslavie as css
 SEQ_MODE = 1
 OBJ_MODE = 2
 
-_widgets = {}
-
-
-def widget(cls):
-    """A decorator for declaring widget classes.
-
-    The decorated class will be discoverable when generating frames from an
-    xml description.
-
-    TODO: There's probably a way to wrap this into the Frame class, so that
-    simply subclassing is enough.
-    """
-    _widgets[cls.__name__.lower()] = cls
-    return cls
+_widgets = None
 
 
 def _mode(obj):
@@ -99,6 +86,14 @@ def from_file(filename):
 
 
 def _from_xml(root):
+
+    # The first time we run this, we need to populate the table of widgets:
+    global _widgets
+    if _widgets is None:
+        _widgets = {}
+        for cls in Frame.__subclasses__():
+            _widgets[cls.__name__.lower()] = cls
+
     children = map(_from_xml, root)
     widget_cls = _widgets[root.tag.lower()]
     return widget_cls(attrs=root.attrib, children=children)
