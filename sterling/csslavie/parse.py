@@ -71,7 +71,6 @@ def number_filter(value):
     except ValueError:
         raise FilterRejection("Not a Number")
 
-
 def bool_filter(value):
     if value.lower() in {'true', 'false'}:
         return value.lower() == 'true'

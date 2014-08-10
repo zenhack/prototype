@@ -1,3 +1,23 @@
+#
+# Copyright 2014 Ian Denhardt <ian@zenhack.net>
+# Copyright      Martin Owens <doctormo@gmail.com>
+#
+# This program is free software: you can redistribute it and/or modify
+#  it under the terms of the GNU General Public License as published by
+#  the Free Software Foundation, either version 3 of the License, or
+#  (at your option) any later version.
+#
+#  This program is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#  GNU General Public License for more details.
+#
+#  You should have received a copy of the GNU General Public License
+#  along with this program.  If not, see <http://www.gnu.org/licenses/>
+#
+"""
+A frame is an xml reprentation widget.
+"""
 
 from types import GeneratorType
 import xml.etree.ElementTree as ET
@@ -27,6 +47,7 @@ def _default_get(haystack, needle, default):
 
 class Frame(css.PropertyObject):
     __metaclass__ = ABCMeta
+    callbacks = ()
 
     def __init__(self, attrs=None, children=None):
         self.attrs = attrs or {}
@@ -43,6 +64,13 @@ class Frame(css.PropertyObject):
 
         for child in children:
             child.parent = self
+
+    def attach_callbacks(self, widget):
+        for cb in self.callbacks:
+            if cb in self.attrs:
+                cb_add = getattr(widget, 'callback_%s_add' % cb)
+                cb_add(lambda o: getattr(data, self.attrs[cb])(o))
+
 
     def widget_seq(self, data):
         """Returns a widget for each element of data, based on this frame."""
@@ -67,9 +95,13 @@ class Frame(css.PropertyObject):
             self.add(w)
         return ret
 
-    @abstractmethod
     def make_widget(self, data, parent=None):
-        pass
+        # Incomplete!!
+        for attr in self.attrs:
+            # Map here if needed XXX
+            if hasattr(widget, attr):
+                setattr(widget, attr, getattr(data, self.attrs[attr]))
+            widget.show()
 
     @abstractmethod
     def efl_container(self):
