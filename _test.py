@@ -1,23 +1,14 @@
-import efl.elementary as elm
-elm.init()
-from sterling import frame, widget, csslavie
+from sterling.model import Model
 
 
-class Model(object):
+class Test(Model):
 
     def __init__(self):
+        super(Test, self).__init__()
         self.first = 'hello'
         self.last = 'goodbye'
 
     def do_it(self, o):
         print("Done!")
 
-m = Model()
-
-app = frame.from_file('test.xml')
-css = csslavie.CssParser('test.css')
-css.attach(app)
-w = app.widget(m)
-
-elm.run()
-elm.shutdown()
+Test().run()
