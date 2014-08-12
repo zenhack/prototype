@@ -1,4 +1,5 @@
 from sterling.model import Model
+from sterling.app import run
 
 
 class Hello(Model):
@@ -11,4 +12,4 @@ class Hello(Model):
     def do_it(self, o):
         print("Done!")
 
-Hello().run()
+run(Hello())

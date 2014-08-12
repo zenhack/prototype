@@ -1,4 +1,3 @@
-#
 # Copyright 2014 Ian Denhardt <ian@zenhack.net>
 # Copyright      Martin Owens <doctormo@gmail.com>
 #
@@ -15,11 +14,24 @@
 # You should have received a copy of the GNU General Public License
 # along with this program. If not, see <http://www.gnu.org/licenses/>
 
+from sterling import frame
+from .csslavie import CssParser
+from efl import elementary as elm
 
-class Model(object):
-    def __init__(self):
-        super(Model, self).__setattr__('changed', set())
+# Importing the module has the effect of declaring the appropriate Frame
+# classes, which are picked up by the frame module; no additional code is
+# needed.
+from sterling import widget
 
-    def __setattr__(self, key, value):
-        self.changed.add(key)
-        super(Model, self).__setattr__(key, value)
+
+def run(model, framespec=None, stylesheet=None):
+    def default_filename(obj, ext):
+        return type(obj).__name__.lower() + '.' + ext
+
+    elm.init()
+    my_frame = frame.from_file(framespec or default_filename(model, 'xml'))
+    css = CssParser(stylesheet or default_filename(model, 'css'))
+    css.attach(my_frame)
+    w = my_frame.widget(model)
+    elm.run()
+    elm.shutdown()
