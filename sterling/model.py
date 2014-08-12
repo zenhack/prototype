@@ -25,10 +25,6 @@ from efl import elementary as elm
 from sterling import widget
 
 
-class InvalidFile(ValueError):
-    pass
-
-
 class Model(object):
     def __init__(self):
         super(Model, self).__setattr__('changed', set())
