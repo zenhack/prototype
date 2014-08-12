@@ -60,6 +60,7 @@ class Button(Frame):
             if 'text' in self.attrs:
                 self._button.text = getattr(data, self.attrs['text'])
 
+            self.attach_callbacks(self._button, data)
             self._button.show()
 
         return self._button

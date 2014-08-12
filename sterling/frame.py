@@ -65,7 +65,7 @@ class Frame(css.PropertyObject):
         for child in children:
             child.parent = self
 
-    def attach_callbacks(self, widget):
+    def attach_callbacks(self, widget, data):
         for cb in self.callbacks:
             if cb in self.attrs:
                 cb_add = getattr(widget, 'callback_%s_add' % cb)
