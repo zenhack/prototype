@@ -22,6 +22,7 @@ A frame is an xml reprentation widget.
 from types import GeneratorType
 import xml.etree.ElementTree as ET
 from abc import abstractmethod, ABCMeta
+from collections import defaultdict
 
 import sterling.csslavie as css
 
@@ -38,19 +39,13 @@ def _mode(obj):
         return OBJ_MODE
 
 
-def _default_get(haystack, needle, default):
-    try:
-        return haystack[needle]
-    except KeyError:
-        return default
-
-
 class Frame(css.PropertyObject):
     __metaclass__ = ABCMeta
     callbacks = ()
 
     def __init__(self, attrs=None, children=None):
-        self.attrs = attrs or {}
+        attrs = defaultdict(lambda: None, attrs or {})
+        self.attrs = attrs
 
         classes = None
         if 'class' in self.attrs:
@@ -59,8 +54,8 @@ class Frame(css.PropertyObject):
                                     classes=classes)
 
         self.children = children or {}
-        self.ctx = _default_get(self.attrs, 'ctx', None)
-        self.mode = _default_get(self.attrs, 'mode', None)
+        self.ctx = attrs['ctx']
+        self.mode = attrs['mode']
 
         for child in children:
             child.parent = self
@@ -76,7 +71,6 @@ class Frame(css.PropertyObject):
                     data.do_updates()
 
                 cb_add(wrapped_callback)
-
 
     def widget_seq(self, data):
         """Returns a widget for each element of data, based on this frame."""
