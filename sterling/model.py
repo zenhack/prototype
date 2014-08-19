@@ -18,8 +18,21 @@
 
 class Model(object):
     def __init__(self):
+        super(Model, self).__setattr__('subscriptions', {})
         super(Model, self).__setattr__('changed', set())
 
     def __setattr__(self, key, value):
         self.changed.add(key)
         super(Model, self).__setattr__(key, value)
+
+    def do_updates(self):
+        for key in self.subscriptions.keys():
+            if key in self.changed and key in self.subscriptions:
+                for subscriber in self.subscriptions[key]:
+                    subscriber(self)
+
+    def subscribe(self, attr, subscriber):
+        if attr not in self.subscriptions:
+            self.subscriptions[attr] = [subscriber]
+        else:
+            self.subscriptions[attr].append(subscriber)

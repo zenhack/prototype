@@ -61,9 +61,13 @@ class Button(Frame):
                 self._button.text = getattr(data, self.attrs['text'])
 
             self.attach_callbacks(self._button, data)
+            data.subscribe(self.attrs['text'], self.update)
             self._button.show()
 
         return self._button
+
+    def update(self, data):
+        self._button.text = getattr(data, self.attrs['text'])
 
     def efl_container(self):
         return self._button

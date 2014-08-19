@@ -11,5 +11,6 @@ class Hello(Model):
 
     def do_it(self, o):
         print("Done!")
+        self.first += '!'
 
 run(Hello())

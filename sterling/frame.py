@@ -69,7 +69,13 @@ class Frame(css.PropertyObject):
         for cb in self.callbacks:
             if cb in self.attrs:
                 cb_add = getattr(widget, 'callback_%s_add' % cb)
-                cb_add(lambda o: getattr(data, self.attrs[cb])(o))
+
+                def wrapped_callback(obj):
+                    real_cb = getattr(data, self.attrs[cb])
+                    real_cb(obj)
+                    data.do_updates()
+
+                cb_add(wrapped_callback)
 
 
     def widget_seq(self, data):
