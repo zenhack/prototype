@@ -32,7 +32,7 @@ OBJ_MODE = 2
 _widgets = None
 
 
-def _mode(obj):
+def mode(obj):
     if type(obj) in {list, tuple, GeneratorType}:
         return SEQ_MODE
     else:
@@ -44,33 +44,22 @@ class Frame(css.PropertyObject):
     callbacks = ()
 
     def __init__(self, attrs=None, children=None):
-        attrs = defaultdict(lambda: None, attrs or {})
         self.attrs = attrs
+        attrs = defaultdict(lambda: None, attrs or {})
 
         classes = None
         if 'class' in self.attrs:
             classes = self.attrs['class'].split(' ')
+        # TODO: I (Ian) Think we need to move this to the widgets?
         super(Frame, self).__init__(name=self.__class__.__name__.lower(),
                                     classes=classes)
 
-        self.children = children or {}
+        self.children = children or []
         self.ctx = attrs['ctx']
         self.mode = attrs['mode']
 
         for child in children:
             child.parent = self
-
-    def attach_callbacks(self, widget, data):
-        for cb in self.callbacks:
-            if cb in self.attrs:
-                cb_add = getattr(widget, 'callback_%s_add' % cb)
-
-                def wrapped_callback(obj):
-                    real_cb = getattr(data, self.attrs[cb])
-                    real_cb(obj)
-                    data.do_updates()
-
-                cb_add(wrapped_callback)
 
     def widget_seq(self, data):
         """Returns a widget for each element of data, based on this frame."""
@@ -91,25 +80,18 @@ class Frame(css.PropertyObject):
         if self.ctx:
             data = getattr(data, self.ctx)
         ret = self.make_widget(data, parent)
-        for w in self.widget_contents(data):
-            self.add(w)
+        if hasattr(ret, 'raw_contents'):
+            for w in self.widget_contents(data):
+                ret.add(w)
         return ret
 
+    @abstractmethod
     def make_widget(self, data, parent=None):
-        # Incomplete!!
-        for attr in self.attrs:
-            # Map here if needed XXX
-            if hasattr(widget, attr):
-                setattr(widget, attr, getattr(data, self.attrs[attr]))
-            widget.show()
+        """Generate a widget for the data based on the frame.
 
-    @abstractmethod
-    def efl_container(self):
-        pass
-
-    @abstractmethod
-    def add(self, widget):
-        pass
+        `parent` should be the widget's parent. The default value of None
+        is typically only valid for top-level widgets such as windows.
+        """
 
 
 def from_file(filename):
@@ -118,6 +100,9 @@ def from_file(filename):
 
 
 def _from_xml(root):
+
+    # XXX: this logic is still "correct," but the names are all wrong; we're
+    # talking about frames, not widgets. need to update this.
 
     # The first time we run this, we need to populate the table of widgets:
     global _widgets

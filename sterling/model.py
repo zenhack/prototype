@@ -18,11 +18,14 @@
 
 class Model(object):
     def __init__(self):
-        super(Model, self).__setattr__('subscriptions', {})
-        super(Model, self).__setattr__('changed', set())
+        self.subscriptions = {}
+        # Setting changed causes the object to watch for updates; prior
+        # to this setattr will work as  normal:
+        self.changed = set()
 
     def __setattr__(self, key, value):
-        self.changed.add(key)
+        if hasattr(self, 'changed'):
+            self.changed.add(key)
         super(Model, self).__setattr__(key, value)
 
     def do_updates(self):
