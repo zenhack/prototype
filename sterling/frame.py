@@ -32,7 +32,7 @@ OBJ_MODE = 2
 _widgets = None
 
 
-def mode(obj):
+def default_mode(obj):
     if type(obj) in {list, tuple, GeneratorType}:
         return SEQ_MODE
     else:
@@ -67,21 +67,26 @@ class Frame(css.PropertyObject):
             for widget in self.widget_contents(datum, self):
                 yield widget
 
-    def widget_contents(self, data):
-        """Returns a generator of all directy child widgets of this frame."""
-        mode = self.mode or _mode(data)
+    def widget_contents(self, data, parent):
+        """Returns a generator of all direct child widgets of this frame.
+
+        `data` is the model from which to construct the widgets.
+        `parent` is the widget for this frame, i.e. the parent of the child
+        widgets.
+        """
+        mode = self.mode or default_mode(data)
         if mode is SEQ_MODE:
             self.widget_seq(data)
         else:
             for child in self.children:
-                yield child.widget(data, parent=self)
+                yield child.widget(data, parent=parent)
 
     def widget(self, data, parent=None):
         if self.ctx:
             data = getattr(data, self.ctx)
         ret = self.make_widget(data, parent)
         if hasattr(ret, 'raw_contents'):
-            for w in self.widget_contents(data):
+            for w in self.widget_contents(data, ret):
                 ret.add(w)
         return ret
 

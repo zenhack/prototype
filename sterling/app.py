@@ -32,6 +32,6 @@ def run(model, framespec=None, stylesheet=None):
     my_frame = frame.from_file(framespec or default_filename(model, 'xml'))
     css = CssParser(stylesheet or default_filename(model, 'css'))
     css.attach(my_frame)
-    w = my_frame.make_widget(model)
+    w = my_frame.widget(model)
     elm.run()
     elm.shutdown()
