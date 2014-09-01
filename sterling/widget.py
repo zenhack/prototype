@@ -112,13 +112,15 @@ class Window(Frame):
             # we can't actually use it, and if we're being called as a child,
             # something is wrong:
             raise TypeError('Parent of Window must be None.')
-        return self._Widget(data)
+        return self._Widget(data, self)
 
     class _Widget(Container):
 
-        def __init__(self, data):
+        def __init__(self, data, frame):
             self._win = window.StandardWindow('test', 'Test')
             self._box = box.Box(self._win)
+            if hasattr(frame, 'horizontal'):
+                self._box.horizontal_set(frame.horizontal)
             self._win.resize_object_add(self._box)
             self._box.show()
             self._win.show()
@@ -131,6 +133,7 @@ class Window(Frame):
 
         def add(self, child):
             self._box.pack_end(child.raw())
+
 
 class Button(Frame):
 
