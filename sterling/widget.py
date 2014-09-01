@@ -95,7 +95,7 @@ class Container(Widget):
     def make_children(self, data):
         """Generate a sequence of child widgets based on the container's frame."""
         mode = self.frame.mode or frame.default_mode(data)
-        if mode is SEQ_MODE:
+        if mode is frame.SEQ_MODE:
             for datum in data:
                 yield self.frame.make_widget(datum, parent=self)
         else:
