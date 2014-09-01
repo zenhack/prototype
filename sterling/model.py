@@ -30,7 +30,7 @@ class Model(object):
 
     def do_updates(self):
         for key in self.subscriptions.keys():
-            if key in self.changed and key in self.subscriptions:
+            if key in self.changed:
                 for subscriber in self.subscriptions[key]:
                     subscriber(self)
 
