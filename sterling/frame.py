@@ -40,6 +40,13 @@ def default_mode(obj):
 
 
 class Frame(css.PropertyObject):
+    """A mapping from models to user interfaces.
+
+    The full documentation of what a frame is, what it defines and how to
+    build them is documented (TODO: not yet it isn't) in `doc/frames.md`.
+
+    Frames should not be created directly by the user; see `from_file`.
+    """
     __metaclass__ = ABCMeta
     callbacks = ()
 
@@ -50,7 +57,6 @@ class Frame(css.PropertyObject):
         classes = None
         if 'class' in self.attrs:
             classes = self.attrs['class'].split(' ')
-        # TODO: I (Ian) Think we need to move this to the widgets?
         super(Frame, self).__init__(name=self.__class__.__name__.lower(),
                                     classes=classes)
 
@@ -62,17 +68,17 @@ class Frame(css.PropertyObject):
             child.parent = self
 
     def widget_seq(self, data):
-        """Returns a widget for each element of data, based on this frame."""
+        """Return a widget for each element of data, based on this frame."""
         for datum in data:
             for widget in self.widget_contents(datum, self):
                 yield widget
 
     def widget_contents(self, data, parent):
-        """Returns a generator of all direct child widgets of this frame.
+        """Return a generator of all direct child widgets of this frame.
 
         `data` is the model from which to construct the widgets.
-        `parent` is the widget for this frame, i.e. the parent of the child
-        widgets.
+        `parent` is the widget for this frame, i.e. the parent of the widgets
+        to be created.
         """
         mode = self.mode or default_mode(data)
         if mode is SEQ_MODE:
@@ -82,6 +88,9 @@ class Frame(css.PropertyObject):
                 yield child.widget(data, parent=parent)
 
     def widget(self, data, parent=None):
+        """Return a widget for this frame, based on `data`.
+
+        TODO: how is this different from `make_widget`? document."""
         if self.ctx:
             data = getattr(data, self.ctx)
         ret = self.make_widget(data, parent)
@@ -100,12 +109,12 @@ class Frame(css.PropertyObject):
 
 
 def from_file(filename):
+    """Load a frame from the given xml file."""
     root = ET.parse(filename).getroot()
     return _from_xml(root)
 
 
 def _from_xml(root):
-
     # XXX: this logic is still "correct," but the names are all wrong; we're
     # talking about frames, not widgets. need to update this.
 
