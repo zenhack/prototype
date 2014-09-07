@@ -96,6 +96,20 @@ class SimpleTestCase(unittest.TestCase):
         self.assertEqual(named.value, 1)
         self.assertEqual(child.value, 5)
 
+    def test_07_indirect_parent(self):
+        """Parent Child Child Rule"""
+        child  = Name(name="child")
+        middle = Name(name="middle")
+        middle.children = [child]
+        parent = Name(name="parent")
+        parent.children = [middle]
+
+        self.css.attach_all(parent)
+        self.assertEqual(parent.value, 1)
+        self.assertEqual(middle.value, 1)
+        self.assertEqual(child.value, 6)
+
+
 if __name__ == '__main__':
     test_support.run_unittest(
        SimpleTestCase,

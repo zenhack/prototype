@@ -24,7 +24,12 @@ name.name#name {
   value: 4;
 }
 
-name#parent name#child {
+name#parent > name#child {
   value: 5;
 }
+
+name#parent   name#child {
+  value: 6;
+}
+
 
