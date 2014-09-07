@@ -17,7 +17,22 @@
 
 
 class Model(object):
+    """a model in the traditional MVC sense
+
+    In terms of concrete functionality, instances of `Model` allow client code
+    to subscribe to updates to the object's attributes.
+
+    Assignment to the model's attributes will flag those attributes as
+    changed if any subscriptions exist. `subscribe` registers a handler
+    for updates to a given attribute, and `do_updates` actually invokes
+    the subscribers.
+    """
+
     def __init__(self):
+        """Initialize the model.
+
+        Subclasses of `Model` *must* invoke `Model`'s `__init__`.
+        """
         self.subscriptions = {}
         # Setting changed causes the object to watch for updates; prior
         # to this setattr will work as  normal:
@@ -29,12 +44,28 @@ class Model(object):
         super(Model, self).__setattr__(key, value)
 
     def do_updates(self):
+        """Notify subscribers of any changed attributes.
+
+        `do_updates` invokes each subscriber whose attribute has changed with
+        the model as its argument. The order in which the subscribers are
+        called is unspecified. When `do_updates` returns, all attributes will
+        be flagged as unchanged.
+        """
         for key in self.subscriptions.keys():
             if key in self.changed:
                 for subscriber in self.subscriptions[key]:
                     subscriber(self)
 
     def subscribe(self, attr, subscriber):
+        """Subscribe to updates to the attribute `attr`.
+
+        Parameters:
+
+            attr - name of the attribute to subscribe to
+            subscriber - a callable accepting a single argument, which will be
+                         the model itself. `subscriber` will be called by
+                         `do_updates` if the attribute has changed.
+        """
         if attr not in self.subscriptions:
             self.subscriptions[attr] = [subscriber]
         else:
