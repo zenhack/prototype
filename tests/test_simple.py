@@ -88,10 +88,13 @@ class SimpleTestCase(unittest.TestCase):
         self.css.attach(named)
         self.assertEqual(named.value, 1)
 
-        named = Name(name="child")
-        named.parents = [Name(name="parent")]
-        self.css.attach(named)
-        self.assertEqual(named.value, 5)
+        named = Name(name="parent")
+        child = Name(name="child")
+        named.children = [child]
+        
+        self.css.attach_all(named)
+        self.assertEqual(named.value, 1)
+        self.assertEqual(child.value, 5)
 
 if __name__ == '__main__':
     test_support.run_unittest(

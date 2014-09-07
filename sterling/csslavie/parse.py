@@ -161,7 +161,7 @@ def get_weight(name):
 
      ! this might be standardised somewhere, but I didn't look it up.
     """
-    return name.count(".") + name.count(" ") * 2 + name.count("#") * 4 + name.count(">") * 8
+    return name.count(".") + name.count("*") * 2 + name.count("#") * 4 + name.count(">") * 8
 
 class StyleSheet(object):
     """This stylesheet object allows one to 'attach' objects to css, this css
@@ -169,6 +169,8 @@ class StyleSheet(object):
     _attr_name = '__name__'
     _attr_oid  = 'name'
     _attr_cls  = 'classes'
+    _attr_children = 'children'
+
     filters    = None
 
     def __init__(self, content=None):
@@ -182,35 +184,58 @@ class StyleSheet(object):
         _i = defaultdict(list)
 
         for names, style in self.styles:
-            _i[names[-1]].append(style)
+            _i['*'.join(names)].append(style)
 
         # Weigh up the names and sort them by weight here
         self._index = OrderedDict(sorted(_i.iteritems(), key=lambda x: get_weight(x[0])))
 
-    def attach(self, obj):
+    def attach(self, obj, parent=None):
         names = Names()
         names.add( getattr(type(obj), self._attr_name, None) )
         names.add( getattr(obj, self._attr_oid, None), '#' )
+        names.set_parent(parent)
         for c in getattr(obj, self._attr_cls, []) or []:
             names.add(c, '.')
         for (ns, style) in self._index.items():
             if names.match(ns):
                 for s in style:
                     obj.add_to(s)
-        # Attach signal here for state updates
+        # XXX Attach signal here for state updates
+        return names
+
+    def attach_all(self, obj, parent=None):
+        children = getattr(obj, self._attr_children, [])
+        new_parent = self.attach(obj, parent=parent)
+        for child in children:
+            self.attach_all(child, parent=new_parent)
+        return new_parent
+
 
 class Names(set):
     def add(self, name, sep=''):
         if name != None:
             set.add(self, sep + str(name).lower())
 
-    def match(self, sublist):
+    def set_parent(self, parent):
+        if not isinstance(parent, (Names, type(None))):
+            name = type(parent).__name__
+            raise TypeError("Can not add '%s' as a CSS Names Set" % name)
+        self.parent = parent
+
+    def match(self, ns):
+        if type(ns) is str:
+            ns = ns.split('*')
+        (sublist, rest) = (ns[-1], ns[:-1])
+
         if type(sublist) is str:
             sublist = sublist.split(' ')
+
         for name in sublist:
             if name not in self:
                 return False
-        #print "'%s' was in %s" % (str(sublist), str(self))
+        if rest:
+            if not getattr(self, 'parent', None) or not self.parent.match(rest):
+                return False
         return True
 
 
