@@ -55,6 +55,7 @@ class Model(object):
             if key in self.changed:
                 for subscriber in self.subscriptions[key]:
                     subscriber(self)
+        super(Model, self).__setattr__('changed', set())
 
     def subscribe(self, attr, subscriber):
         """Subscribe to updates to the attribute `attr`.
