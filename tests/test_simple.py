@@ -96,6 +96,35 @@ class SimpleTestCase(unittest.TestCase):
         self.assertEqual(named.value, 1)
         self.assertEqual(child.value, 5)
 
+    def test_07_indirect_parent(self):
+        """Parent Child Child Rule"""
+        child  = Name(name="child")
+        middle = Name(name="middle")
+        middle.children = [child]
+        parent = Name(name="parent")
+        parent.children = [middle]
+
+        self.css.attach_all(parent)
+        self.assertEqual(parent.value, 1)
+        self.assertEqual(middle.value, 1)
+        self.assertEqual(child.value, 6)
+
+    def test_08_multiple_set(self):
+        """Multiple Sets"""
+        child  = Name(name="child")
+        two    = Name(name="other")
+        middle = Name(name="name")
+        middle.children = [child]
+        parent = Name(name="parent")
+        parent.children = [middle, two]
+
+        self.css.attach_all(parent)
+        self.assertEqual(parent.second_value, 7)
+        self.assertEqual(middle.second_value, 7)
+        self.assertEqual(child.second_value, 7)
+        self.assertFalse(hasattr(two, 'second_value'))
+
+
 if __name__ == '__main__':
     test_support.run_unittest(
        SimpleTestCase,

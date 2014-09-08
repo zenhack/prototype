@@ -131,7 +131,9 @@ def _remove(string, left='"""', right='"""'):
 
 def _parse_names(content):
     result = []
-    for name in content.strip().split(' '):
+    # We want to make sure the direct parent/child
+    # chevron can be with or without spaces.
+    for name in content.replace('>', ' > ').split():
         for char in '.#:':
             name = name.replace(char, ' '+char)
         result.append( name.strip() )
@@ -232,12 +234,21 @@ class Names(set):
 
         for name in sublist:
             if name not in self:
-                return False
-        if rest:
-            if not getattr(self, 'parent', None) or not self.parent.match(rest):
-                return False
-        return True
+                return False 
 
+        # Do we need a parent tested? (and does one exist?)
+        if not rest or not getattr(self, 'parent', None):
+            return not bool(rest)
+
+        # Direct parent test (parent must match the next stanza)
+        if rest[-1] == '>':
+            return self.parent.match(rest[:-1])
+
+        # Indirect parent test (any parent can match the next stanza)
+        parent = self.parent
+        while parent and parent.match(rest):
+            parent = getattr(parent, 'parent', None)
+        return bool(parent)
 
 
 
