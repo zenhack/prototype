@@ -119,10 +119,10 @@ class SimpleTestCase(unittest.TestCase):
         parent.children = [middle, two]
 
         self.css.attach_all(parent)
-        self.assertEqual(parent.vorlal, 7)
-        self.assertEqual(middle.vorlal, 7)
-        self.assertEqual(child.vorlal, 7)
-        self.assertFalse(hasattr(two, 'vorlal'))
+        self.assertEqual(parent.second_value, 7)
+        self.assertEqual(middle.second_value, 7)
+        self.assertEqual(child.second_value, 7)
+        self.assertFalse(hasattr(two, 'second_value'))
 
 
 if __name__ == '__main__':
