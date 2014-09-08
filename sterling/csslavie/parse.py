@@ -235,23 +235,20 @@ class Names(set):
         for name in sublist:
             if name not in self:
                 return False 
-        if rest:
-            if not getattr(self, 'parent', None):
-                return False
-            if rest[-1] == '>': # Direct test
-                ret = self.parent.match(rest[:-1])
-            else: # Indirect test
-                ret = False
-                parent = self.parent
-                while parent:
-                    if parent.match(rest):
-                        ret = True
-                        break
-                    parent = getattr(parent, 'parent', None)
-            if not ret:
-                return False
-        return True
 
+        # Do we need a parent tested? (and does one exist?)
+        if not rest or not getattr(self, 'parent', None):
+            return not bool(rest)
+
+        # Direct parent test (parent must match the next stanza)
+        if rest[-1] == '>':
+            return self.parent.match(rest[:-1])
+
+        # Indirect parent test (any parent can match the next stanza)
+        parent = self.parent
+        while parent and parent.match(rest):
+            parent = getattr(parent, 'parent', None)
+        return bool(parent)
 
 
 

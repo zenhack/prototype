@@ -32,4 +32,9 @@ name#parent   name#child {
   value: 6;
 }
 
+#name,
+#child,
+#parent {
+  vorlal: 7;
+}
 
