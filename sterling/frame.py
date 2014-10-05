@@ -29,7 +29,7 @@ import sterling.csslavie as css
 SEQ_MODE = 1
 OBJ_MODE = 2
 
-_widgets = None
+_frame_types = None
 
 
 def default_mode(obj):
@@ -115,16 +115,13 @@ def from_file(filename):
 
 
 def _from_xml(root):
-    # XXX: this logic is still "correct," but the names are all wrong; we're
-    # talking about frames, not widgets. need to update this.
-
-    # The first time we run this, we need to populate the table of widgets:
-    global _widgets
-    if _widgets is None:
-        _widgets = {}
+    # The first time we run this, we need to populate the table of frame types:
+    global _frame_types
+    if _frame_types is None:
+        _frame_types = {}
         for cls in Frame.__subclasses__():
-            _widgets[cls.__name__.lower()] = cls
+            _frame_types[cls.__name__.lower()] = cls
 
     children = map(_from_xml, root)
-    widget_cls = _widgets[root.tag.lower()]
-    return widget_cls(attrs=root.attrib, children=children)
+    frame_cls = _frame_types[root.tag.lower()]
+    return frame_cls(attrs=root.attrib, children=children)
