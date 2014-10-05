@@ -55,9 +55,10 @@ class Widget(object):
             cb_add = getattr(self.raw(), 'callback_%s_add' % cb)
 
             def wrapped_callback(obj):
-                real_cb = getattr(data, self.frame.attrs[cb])
-                real_cb(obj)
-                data.do_updates()
+                if cb in self.frame.attrs:
+                    real_cb = getattr(data, self.frame.attrs[cb])
+                    real_cb(obj)
+                    data.do_updates()
 
             cb_add(wrapped_callback)
 
