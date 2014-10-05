@@ -105,7 +105,7 @@ class Container(Widget):
 
 
 class Window(Frame):
-    """A widow widget based ontop of the windows and box EFL widgets"""
+    """A widow widget based ontop of the window and box EFL widgets"""
 
     def make_widget(self, data, parent=None):
         if parent is not None:
